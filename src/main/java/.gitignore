@@ -1,0 +1,18 @@
+# IntelliJ IDEA
+.iml
+.idea
+
+# Maven
+target
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvntiming.properties
+## httpsgithub.comtakarimaven-wrapper#usage-without-binary-jar
+.mvnwrappermaven-wrapper.jar
+
+.java-version
