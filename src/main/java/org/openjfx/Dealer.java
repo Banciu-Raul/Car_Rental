@@ -65,7 +65,7 @@ public class Dealer implements Initializable {
 
     private int id_selectedCar;
     private ObservableList<Car> cars;
-    private int index = -1;
+    private int index = -2;
     private Connection conn = null;
     private ResultSet rs = null;
     private PreparedStatement pst = null;
