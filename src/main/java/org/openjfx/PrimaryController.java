@@ -1,5 +1,7 @@
 package org.openjfx;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,10 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class PrimaryController {
 
@@ -28,23 +27,26 @@ public class PrimaryController {
     private PasswordField password;
 
     @FXML
-    private static TextField city;
+    private TextField city;
 
     @FXML
     private Text validText;
 
     private int okay = 0;
     private int okayC = 0;
+    private String email;
 
     private String role;
+
+    public static String cityStatic;
 
     @FXML
     public void loginOnAction(ActionEvent event) throws IOException {
         String nextFXML;
-        if (!username.getText().isBlank() && !password.getText().isBlank() && city.getText().isBlank()) {
+        if (!username.getText().isBlank() && !password.getText().isBlank() && !city.getText().isBlank()) {
+            getUser();
             validateLogin();
             validateCity();
-            getUser();
 
             if (role.equals("admin")) {
                 nextFXML = "fxml/Dealer.fxml";
@@ -75,7 +77,7 @@ public class PrimaryController {
         Connection connectDB = connectNow.getConnection();
 
         String verifyLogin = "SELECT count(1) FROM users WHERE username = '" + username.getText() +
-                "' AND replace(cast(aes_decrypt(password, 'key1234') as char(100)), '" + username.getText() + "', '') = '" + password.getText() + "'";
+                "' AND replace(cast(aes_decrypt(password, 'key1234') as char(100)), '" + email + "', '') = '" + password.getText() + "'";
 
         try {
             Statement statement = connectDB.createStatement();
@@ -106,6 +108,7 @@ public class PrimaryController {
             ResultSet queryResult = statement.executeQuery(getRow);
             while (queryResult.next()) {
                 role = queryResult.getString("role");
+                email = queryResult.getString("email");
                 System.out.println(queryResult.getString("id"));
                 System.out.println(role);
             }
@@ -118,19 +121,23 @@ public class PrimaryController {
     public void validateCity(){
         DatabaseConnection connectNow = new DatabaseConnection();
         Connection connectDB = connectNow.getConnection();
+        ObservableList<Car> list = FXCollections.observableArrayList();
 
-        String verifyLogin = "SELECT count(1) FROM cars where city = '" + city.getText() +"'";
+        // String verifyLogin = "SELECT count(1) FROM cars where city = '" + city.getText() +"'";
 
         try {
-            Statement statement = connectDB.createStatement();
-            ResultSet queryResult = statement.executeQuery(verifyLogin);
+            PreparedStatement ps = connectDB.prepareStatement("SELECT  * FROM cars where city = '" + city.getText() + "'" );
+//            PreparedStatement ps = connectDB.prepareStatement("SELECT  * FROM cars where city = 'Deva'" );
+            ResultSet rs = ps.executeQuery();
 
-            while (queryResult.next()) {
-                if (queryResult.getInt(1) > 0) {
-                    okayC = 1;
-                } else {
-                    validText.setText("Please select another city..");
-                }
+            while (rs.next()) {
+                list.add(new Car(rs.getString("brand"), rs.getString("model"), rs.getString("year"), rs.getString("seats"), rs.getString("city"), Integer.parseInt(rs.getString("id"))));
+
+            }
+            if(list.isEmpty() == false){
+                okayC = 1;
+                cityStatic = list.get(0).getCity();
+
             }
 
         } catch (SQLException e) {
@@ -138,10 +145,4 @@ public class PrimaryController {
             e.getCause();
         }
     }
-
-
-    public static String getCity() {
-        return city.getText();
-    }
-
 }

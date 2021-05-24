@@ -16,7 +16,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("fxml/Dealer.fxml"));
+        loader.setLocation(getClass().getResource("fxml/primary.fxml"));
         Parent content = loader.load();
 
         Scene scene_main = new Scene(content, 800, 600);

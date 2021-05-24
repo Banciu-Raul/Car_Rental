@@ -75,8 +75,8 @@ public class RegisterController {
         String Password = passwordField.getText();
         String Username = username.getText();
 
-        String insertFields = "INSERT INTO users (name, email, username, phone, password, role) VALUES ";
-        String insertValues = "('" + Name + "','" + Email  + "','" + Username + "','" + Phone + "','" + " aes_encrypt(concat('" + Password + "', '" + Email + "'), 'key1234'), 'user')";
+        String insertFields = "INSERT INTO users (name, email, username, phone, password, role) VALUES ('";
+        String insertValues =  Name + "','" + Email  + "','" + Username + "','" + Phone + "'," + "aes_encrypt(concat('" + Password + "', '" + Email + "'), 'key1234'), 'user')";
         String insertRegister = insertFields + insertValues;
 
         try{
